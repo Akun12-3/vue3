@@ -1,5 +1,5 @@
 {
-  "name": "reactivity",
+  "name": "@vue/shard",
   "version": "1.0.0",
   "main": "index.js",
   "module": "dist/shared.esm-bundler.js",
