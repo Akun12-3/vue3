@@ -8,7 +8,7 @@ const argv = minimist(process.argv.slice(2))
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const target = argv._[0] || 'reactivity'
-const format = argv.f ? argv.f : 'iife'
+const format =  argv.f || 'iife'
 const require = createRequire(import.meta.url)
 // 获取打包格式
 
