@@ -1,5 +1,6 @@
 // 保存已经被清理掉的节点，留着复用
 let linkPool: Link
+
 /**
  * 依赖项
  */
@@ -38,7 +39,8 @@ export interface Link {
     // 下一个依赖项节点
     nextDep: Link | undefined
 }
-export function link (dep, sub){
+
+export function link(dep, sub) {
     const currentDep = sub.depsTail
     /**
      * 分两种情况：
@@ -105,22 +107,26 @@ export function link (dep, sub){
     //endregion
 }
 
-export function propagate(subs:Link) {
+export function propagate(subs: Link) {
 
     let link = subs
     let queuedEffect = []
     while (link) {
         const sub = link.sub
-      if(!sub.tracking){
-          queuedEffect.push(sub)
-      }
+        if (!sub.tracking) {
+            queuedEffect.push(sub)
+        }
         link = link.nextSub
     }
     queuedEffect.forEach(effect => effect.notify())
 }
 
+export function startTrack(sub) {
+    sub.tracking = true
+    sub.depsTail = undefined
+}
 
-export function endTrack(sub){
+export function endTrack(sub) {
     sub.tracking = false
     /**
      * depsTail 有，并且 depsTail 还有 nextDep ，我们应该把它们的依赖关系清理掉
@@ -128,37 +134,37 @@ export function endTrack(sub){
      */
     const depsTail = sub.depsTail
     if (depsTail) {
-       if(depsTail.nextDep){
-           clearTracking(depsTail.nextDep)
-           depsTail.nextDep = undefined
-       }
+        if (depsTail.nextDep) {
+            clearTracking(depsTail.nextDep)
+            depsTail.nextDep = undefined
+        }
     } else if (sub.deps) {
         clearTracking(sub.deps)
         sub.deps = undefined
     }
 }
 
-function clearTracking(link:Link){
-    while(link){
-        const { prevSub, nextSub, nextDep, dep } = link
+function clearTracking(link: Link) {
+    while (link) {
+        const {prevSub, nextSub, nextDep, dep} = link
         /**
          * 如果 prevSub 有，那就把 prevSub 的下一个节点，指向当前节点的下一个
          * 如果没有，那就是头节点，那就把 dep.subs 指向当前节点的下一个
          */
-        if(prevSub){
+        if (prevSub) {
             prevSub.nextSub = nextSub
             link.nextSub = undefined
-        }else{
+        } else {
             dep.subs = nextSub
         }
         /**
          * 如果下一个有，那就把 nextSub 的上一个节点，指向当前节点的上一个节点
          * 如果下一个没有，那它就是尾节点，把 dep.depsTail 只想上一个节点
          */
-        if(nextSub){
+        if (nextSub) {
             nextSub.prevSub = prevSub
             link.prevSub = undefined
-        }else{
+        } else {
             dep.subsTail = prevSub
         }
 
@@ -171,3 +177,4 @@ function clearTracking(link:Link){
         link = nextDep
     }
 }
+

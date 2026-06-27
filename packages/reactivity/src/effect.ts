@@ -1,36 +1,41 @@
-import {endTrack, Link} from './system'
+import {endTrack, Link, startTrack} from './system'
+
 export let activeSub;
-export function effect(fn,options){
+
+export function setActiveSub(sub) {
+    activeSub = sub
+}
+
+export function effect(fn, options) {
     const e = new ReactiveEffect(fn);
-    Object.assign(e,options);
+    Object.assign(e, options);
     e.run();
-    const runner = ()=>e.run()
+    const runner = () => e.run()
     runner.effect = e
     return runner
 }
-function startTrack(sub: ReactiveEffect){
-    sub.tracking = true
-    sub.depsTail = undefined
-}
-class ReactiveEffect{
-    deps:Link;
-    depsTail:Link;
-    tracking= false;
+
+class ReactiveEffect {
+    deps: Link;
+    depsTail: Link;
+    tracking = false;
+
     constructor(public fn) {
     }
 
-    run(){
+    run() {
         // 先将当前的 effect 保存起来，用来处理嵌套的逻辑
         const prevSub = activeSub
-        activeSub = this
+        setActiveSub(this)
         startTrack(this)
         try {
             return this.fn()
         } finally {
             endTrack(this)
-            activeSub = prevSub
+            setActiveSub(prevSub)
         }
     }
+
     /**
      * 默认调用 run，如果用户传了，那以用户的为主，实例属性的优先级，由于原型属性
      */
