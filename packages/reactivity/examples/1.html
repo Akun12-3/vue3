@@ -12,9 +12,10 @@
 
     const count = ref(0)
     const name = ref('Vue 3')
-    effect(() => {
+    const effectRunner = effect(() => {
         console.log(count.value, name.value)
     })
+    
     setTimeout(() => {
         count.value++
     }, 1000)

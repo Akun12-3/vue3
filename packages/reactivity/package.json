@@ -1,6 +1,7 @@
 {
   "name": "reactivity",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "module": "dist/reactivity.esm-bundler.js",
   "unpkg": "dist/reactivity.global.js",
@@ -13,6 +14,6 @@
     ]
   },
   "dependencies": {
-    "@vue/shard": "workspace:^"
+    "@vue/shared": "workspace:^"
   }
 }
