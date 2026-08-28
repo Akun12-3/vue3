@@ -167,6 +167,9 @@ function hasChanged(newVal, oldVal) {
 function isFunction(val) {
   return typeof val === "function";
 }
+function isArray(val) {
+  return Array.isArray(val);
+}
 
 // packages/reactivity/src/ref.ts
 function ref(value) {
@@ -210,16 +213,52 @@ function triggerRef(dep) {
 function isRef(target) {
   return target && target["__v_isRef" /* IS_REF */];
 }
-
-// packages/reactivity/src/computed.ts
 var _a2;
 _a2 = "__v_isRef" /* IS_REF */;
+var ObjectRefImpl = class {
+  constructor(_object, _key) {
+    this._object = _object;
+    this._key = _key;
+    this[_a2] = true;
+  }
+  get value() {
+    return this._object[this._key];
+  }
+  set value(newVal) {
+    this._object[this._key] = newVal;
+  }
+};
+function toRef(object, key) {
+  return new ObjectRefImpl(object, key);
+}
+function unRef(target) {
+  return isRef(target) ? target.value : target;
+}
+function proxyRefs(target) {
+  return new Proxy(target, {
+    get(target2, key, receiver) {
+      return unRef(Reflect.get(target2, key, receiver));
+    },
+    set(target2, key, value, receiver) {
+      const oldValue = target2[key];
+      if (isRef(oldValue) && !isRef(value)) {
+        oldValue.value = value;
+        return true;
+      }
+      return Reflect.set(target2, key, value, receiver);
+    }
+  });
+}
+
+// packages/reactivity/src/computed.ts
+var _a3;
+_a3 = "__v_isRef" /* IS_REF */;
 var ComputedRefImpl = class {
   constructor(fn, setter) {
     this.fn = fn;
     this.setter = setter;
     // computed 也是一个 ref，通过 isRef 也返回 true
-    this[_a2] = true;
+    this[_a3] = true;
     //endregion
     this.tracking = false;
     //endregion
@@ -285,9 +324,18 @@ function track(target, key) {
 function trigger(target, key) {
   const depsMap = targetMap.get(target);
   if (!depsMap) return;
-  const dep = depsMap.get(key);
-  if (!dep) return;
-  propagate(dep.subs);
+  if (isArray(target) && key === "length") {
+    const length = target.length;
+    depsMap.forEach((dep, depKey) => {
+      if (depKey >= length || depKey === "length") {
+        propagate(dep.subs);
+      }
+    });
+  } else {
+    const dep = depsMap.get(key);
+    if (!dep) return;
+    propagate(dep.subs);
+  }
 }
 var Dep = class {
   constructor() {
@@ -351,10 +399,13 @@ export {
   effect,
   isReactive,
   isRef,
+  proxyRefs,
   reactive,
   ref,
   setActiveSub,
+  toRef,
   trackRef,
-  triggerRef
+  triggerRef,
+  unRef
 };
 //# sourceMappingURL=reactivity.esm.js.map

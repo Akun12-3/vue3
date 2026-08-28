@@ -75,6 +75,38 @@ class ObjectRefImpl {
     this._object[this._key] = newVal;
   }
 }
-function toRef(object, key) {
+export function toRef(object, key) {
   return new ObjectRefImpl(object, key);
+}
+export function unRef(target) {
+  /**
+   * 自动解包 ref
+   * 如果这个 target[key] 是一个 ref，那就返回 ref.value，否则返回 target[key]
+   */
+  return isRef(target) ? target.value : target;
+}
+export function proxyRefs(target) {
+  return new Proxy(target, {
+    get(target, key, receiver) {
+      return unRef(Reflect.get(target, key, receiver));
+    },
+    set(target, key, value, receiver) {
+      const oldValue = target[key];
+      /**
+       * 如果更新了 state.a 它之前是个 ref，那么会修改原始的 ref.value 的值 等于 newValue
+       * 如果 newValue 是一个 ref，那就算了
+       */
+      if (isRef(oldValue) && !isRef(value)) {
+        /**
+         * const a = ref(0)
+         * target = { a }
+         * 更新 target.a = 1 ，它就等于更新了 a.value
+         * a.value = 1
+         */
+        oldValue.value = value;
+        return true;
+      }
+      return Reflect.set(target, key, value, receiver);
+    },
+  });
 }

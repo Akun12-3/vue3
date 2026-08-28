@@ -9,3 +9,6 @@ export function hasChanged(newVal: any, oldVal: any) {
 export function isFunction(val: any) {
   return typeof val === "function";
 }
+export function isArray(val: any) {
+  return Array.isArray(val);
+}
