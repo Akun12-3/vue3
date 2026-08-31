@@ -42,6 +42,15 @@ importers:
         specifier: workspace:^
         version: link:../shared
 
+  packages/runtime-core:
+    dependencies:
+      '@vue/reactivity':
+        specifier: ^3.5.42
+        version: 3.5.42
+      '@vue/shared':
+        specifier: ^3.5.42
+        version: 3.5.42
+
   packages/runtime-dom:
     dependencies:
       '@vue/reactivity':
@@ -52,6 +61,12 @@ importers:
         version: link:../shared
 
   packages/shared: {}
+
+  packages/vue:
+    dependencies:
+      '@vue/runtime-dom':
+        specifier: workspace:^
+        version: link:../runtime-dom
 
 packages:
 
@@ -595,6 +610,16 @@ packages:
   /@types/resolve@1.20.2:
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
     dev: true
+
+  /@vue/reactivity@3.5.42:
+    resolution: {integrity: sha512-TzNNfKpb7hDxbQltwAut8VDQA5YP+BuRlxntHUuRjyKwlMvmAPbs3unhCvieijifY6vFfVBwsS7wG/C7uq+bEQ==}
+    dependencies:
+      '@vue/shared': 3.5.42
+    dev: false
+
+  /@vue/shared@3.5.42:
+    resolution: {integrity: sha512-2rPxex1jQf4jvl9MOHl6YaXCPcrNqz/FstMOEh3QWY+/OME9nQTvl9WYeCwhW7AFjaR0SnngZGlp/wkR6rkI6g==}
+    dev: false
 
   /commondir@1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}

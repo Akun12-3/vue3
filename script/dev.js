@@ -10,9 +10,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const target = argv._[0] || "reactivity";
 const format = argv.f || "iife";
 const require = createRequire(import.meta.url);
-
 // 获取打包格式
-
 const pkg = require(`../packages/${target}/package.json`);
 const entry = resolve(__dirname, `../packages/${target}/src/index.ts`);
 console.log(__dirname, target, format, entry, pkg);

@@ -157,7 +157,7 @@ var ReactiveEffect = class {
   }
 };
 
-// packages/shared/src/index.ts
+// packages/shared/src/utils.ts
 function isObject(val) {
   return typeof val === "object" && val !== null;
 }

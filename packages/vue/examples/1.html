@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+</body>
+<script type="module">
+    import { h } from '../dist/vue.esm.js';
+    function onClick(){
+        console.log('123123412')
+    }
+    const vdom = h('div', {class:'a', onClick}, [h('span','1'), '文本', 123])
+    console.log(vdom,123123)
+</script>
+</html>

@@ -1,0 +1,20 @@
+export function isObject(val: any) {
+  return typeof val === "object" && val !== null;
+}
+
+export function hasChanged(newVal: any, oldVal: any) {
+  return !Object.is(newVal, oldVal);
+}
+
+export function isFunction(val: any) {
+  return typeof val === "function";
+}
+export function isArray(val: any) {
+  return Array.isArray(val);
+}
+export function isString(val: any) {
+  return typeof val === "string";
+}
+export function isNumber(val: any) {
+  return typeof val === "number";
+}
